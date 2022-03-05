@@ -1,0 +1,333 @@
+Xylophone
+
+
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/src/audio_cache.dart';
+import 'package:flutter/services.dart';
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      appBar: AppBar(
+        title: Text('XYLOPHONE'),
+        centerTitle: true,
+      ),
+      body: XyloPage(),
+    ),
+  ));
+}
+class XyloPage extends StatefulWidget {
+  @override
+  _XyloPageState createState() => _XyloPageState();
+}
+class _XyloPageState extends State<XyloPage> {
+  void PlayAudio(int i) {
+    final player = AudioCache();
+    player.play("note$i.wav");
+  }
+  void playSound(int i) async {
+    AudioPlayer player = AudioPlayer();
+    String audioasset = 'assets/note$i.wav';
+    ByteData bytes = await rootBundle.load(audioasset);
+    Uint8List audioBytes =
+    bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+    int result = await player.playBytes(audioBytes);
+    if (result == 1) {
+      print("Audio Playing");
+    } else {
+      print("error");
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.white),
+            onPressed: () {
+              playSound(1);
+            },
+            child: Text("First"),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.yellow),
+            onPressed: () {
+              playSound(2);
+            },
+            child: Text("Second"),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.pink),
+            onPressed: () {
+              playSound(3);
+            },
+            child: Text("Third"),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.brown),
+            onPressed: () {
+              PlayAudio(4);
+            },
+            child: Text("Fourth"),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.black),
+            onPressed: () {
+              playSound(5);
+            },
+            child: Text("Fifth"),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.purple),
+            onPressed: () {
+              playSound(6);
+            },
+            child: Text("Sixth"),
+          ),
+        ),
+        Expanded(
+          child: TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.blueGrey),
+            onPressed: () {
+              PlayAudio(7);
+            },
+            child: Text("Seventh"),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+	
+
+
+
+
+
+
+Dice
+
+import 'dart:math';
+import 'package:flutter/material.dart';
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      appBar: AppBar(title: Text('DICEE'), centerTitle: true,),
+      body: DicePage(),
+    ),
+  ));
+}
+
+class DicePage extends StatefulWidget{
+  const DicePage({Key? key}) : super(key : key);
+
+  @override
+  _DicePageState createState() => _DicePageState();
+
+}
+
+class _DicePageState extends State<DicePage>{
+  int left = 1;
+  int right = 2;
+
+  void faceChange(){
+    setState(() {
+      left = Random().nextInt(6) + 1;
+      right = Random().nextInt(6) + 1;
+    });
+  }
+  @override	
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+          child: Row(
+            children: [
+              Expanded(
+                  flex: 1,
+                  child: TextButton(
+                    style: TextButton.styleFrom(backgroundColor: Colors.blueAccent),
+                    child: Image.asset('images/dice$left.png'),
+                    onPressed: (){
+                      faceChange();
+                    },
+              )),
+
+              Expanded(
+                  flex:1,
+                  child: TextButton(
+                style: TextButton.styleFrom(backgroundColor: Colors.blueAccent),
+                child: Image.asset('images/dice$right.png'),
+                onPressed: (){
+                  faceChange();
+                },
+              ))
+            ],
+          ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+quiz
+
+
+import 'package:flutter/material.dart';
+import 'package:quiz/Question.dart';
+import 'Question.dart';
+
+class Questions{
+  List<Question> questionBank = [Question(question: "20-9=11", answer: true),
+  Question(question: "Vetican city is smallest city", answer: true),
+  Question(question: "Russia is largest country", answer: true),
+  Question(question: "Pluto is a planet", answer: false),
+    Question(question: "20/0 = 0", answer: false)];
+}
+
+class QuizPage extends StatefulWidget{
+  const QuizPage({Key? key}) : super(key: key);
+
+  @override
+  _QuizPageState createState() => _QuizPageState();
+
+}
+
+class _QuizPageState extends State<QuizPage>{
+  int question = 0;
+  int currScore = 0;
+  Questions questions = new Questions();
+
+  void updateQuestion(){
+    setState(() {
+      question = question + 1;
+    });
+  }
+
+  void updateScore(bool choice, int questionNum){
+    if(questionNum == questions.questionBank.length){
+      print("End of Question");
+    }
+
+    else{
+      if(choice == questions.questionBank[questionNum].answer){
+        setState(() {
+          currScore = currScore + 1;
+        });
+      }
+    }
+  }
+
+  bool checkQuestion(int questionNum){
+    if(questionNum < questions.questionBank.length){
+      return true;
+    }
+
+    else{
+      return false;
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Text(
+              checkQuestion(question)?questions.questionBank[question].question.toString():"End",
+              style: TextStyle(fontSize: 30.0),
+            ),
+          ),
+
+          SizedBox(height: 30.0,),
+          if(checkQuestion(question))
+            ElevatedButton(onPressed: (){
+              setState(() {
+                updateScore(true, question);
+                updateQuestion();
+              });
+
+            }, child: Text ("True")),
+
+          if(checkQuestion(question))
+            ElevatedButton(onPressed: (){
+              setState(() {
+                updateScore(false, question);
+                updateQuestion();
+              });
+
+            }, child: Text ("Fasle")),
+
+          if(checkQuestion(question))
+            Padding(padding: const EdgeInsets.all(50.0),
+            child: Center(
+              child: Text(
+                "Current Score: ",
+                style: TextStyle(fontSize: 30.0),
+              ),
+            ),),
+
+          if(!checkQuestion(question))
+            Padding(padding: const EdgeInsets.all(50.0),
+              child: Center(
+                child: Text(
+                  "Total Score: ",
+                  style: TextStyle(fontSize: 30.0),
+                ),
+              ),),
+
+          if(checkQuestion(question))
+            Padding(padding: const EdgeInsets.all(50.0),
+              child: Center(
+                child: Text(
+                  '${currScore}',
+                  style: TextStyle(fontSize: 30.0),
+                ),
+              ),),
+
+          if(!checkQuestion(question))
+            Padding(padding: const EdgeInsets.all(50.0),
+              child: Center(
+                child: Text(
+                  '${currScore}' + '/' + questions.questionBank.length.toString(),
+                  style: TextStyle(fontSize: 30.0),
+                ),
+              ),),
+        ],
+      ),
+    );
+  }
+}
+
+void main(){
+  runApp(MaterialApp(
+    home:SafeArea(
+      child: Scaffold(
+        body: QuizPage(),
+      )
+    )
+  ));
+}
+
+
+//question.dart
+
+
+																							
